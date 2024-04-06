@@ -1,18 +1,22 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
 
-const ItemHome = () => {
+const ItemHome = ({item}) => {
   return (
-    <View style={styles.container}>
+    
+      
+      <View style={styles.container}>
+        {/* <TouchableOpacity onPress={()=>navigation.navigate('Cart')}> */}
         <View style={styles.viewItem}>
-            <Image style={styles.img} source={{uri:'https://i.pinimg.com/564x/64/ec/a0/64eca095aff49d952e87cf3aba39a9d1.jpg'}}/>
+            <Image style={styles.img} source={{uri: item.img}}/>
             <View>
-            <Text style={styles.title}>The Firm:<Text style={{fontStyle:"italic"}}> BMW </Text></Text>
-            <Text style={styles.title}>Name:<Text style={{fontStyle:"italic"}}> BMW S1000RR </Text></Text>
-            <Text style={styles.title}>Price:<Text style={styles.text}> 1.000.000.000</Text></Text>
+            <Text style={styles.title}>The Firm:<Text style={{fontStyle:"italic"}}>{item.theFirm} </Text></Text>
+            <Text style={styles.title}>Name:<Text style={{fontStyle:"italic"}}> {item.motorName} </Text></Text>
+            <Text style={styles.title}>Price:<Text style={styles.text}> {item.price}</Text></Text>
             </View>
         </View>
       
+    {/* </TouchableOpacity> */}
     </View>
   )
 }

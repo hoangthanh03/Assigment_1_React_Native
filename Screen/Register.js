@@ -1,32 +1,26 @@
-import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
 import TextInPut_Custom from '../Component_custom/TextInPut_Custom'
 import CustomButton from '../Component_custom/Button_Custom'
+import auth from '@react-native-firebase/auth';
 
 const Register = ({ navigation }) => {
-  //usetate lưu giá trị
-  const [userName, setUserName] = useState('')
-  const [password, setPassword] = useState('')
-  const [Cfpassword, setCfPassword] = useState('')
+  // State để lưu giá trị của các input
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('');
+  const [Cfpassword, setCfPassword] = useState('');
 
-  //usestate lưu giá trị khi input bị lỗi hiển thị ra thẻ text
-  const [errUser, setErrUser] = useState('')
-  const [errPass, setErrPass] = useState('')
-  const [errCfPass, setErrCfPass] = useState('')
+  // State để lưu trạng thái lỗi của các input
+  const [errUser, setErrUser] = useState('');
+  const [errPass, setErrPass] = useState('');
+  const [errCfPass, setErrCfPass] = useState('');
 
-  // usestate lưu giá trị khi input được theo dõi
+  // State để lưu trạng thái focus của các input
   const [userNameFocused, setUserNameFocused] = useState(false);
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [CfpasswordFocused, setCfPasswordFocused] = useState(false);
 
-  const [userNameError, setUserNameError] = useState(false);
-  const [passwordError, setPasswordError] = useState(false);
-  const [CfpasswordError, setCfPasswordError] = useState(false);
-
-  const userNameRef = useRef(null)
-  const passwordRef = useRef(null)
-  const CfpasswordRef = useRef(null)
-
+  // Function để xử lý khi input mất focus
   const handleUserNameFocus = () => {
     setUserNameFocused(true);
     setPasswordFocused(false);
@@ -45,46 +39,44 @@ const Register = ({ navigation }) => {
     setUserNameFocused(false);
   };
 
-  const handleLogin = () => {
-    // Handle login here
-    // navigation.navigate('Home')
-  }
-
-  const checkInputs = () => {
+  // Function để xử lý khi người dùng nhấn nút Register
+  const handleRegister = () => {
+    // Kiểm tra các input trước khi đăng ký
     if (!userName) {
       setErrUser('Vui lòng nhập username');
-      userNameRef.current?.focus();
-      setUserNameError(true)
-    } else {
-      setUserNameError(false)
-      setErrUser('')
     }
 
     if (!password) {
       setErrPass('Vui lòng nhập password');
-      passwordRef.current?.focus();
-      setPasswordError(true)
-    } else {
-      setPasswordError(false)
-      setErrPass('')
     }
 
     if (!Cfpassword) {
       setErrCfPass('Vui lòng xác nhận password');
-      CfpasswordRef.current.focus();
-      setCfPasswordError(true)
-    } else {
-      setCfPasswordError(false)
-      setErrCfPass('')
+      return
     }
 
-    if(Cfpassword != password){
-
+    if (Cfpassword !== password) {
+      setErrCfPass('Mật khẩu xác nhận không trùng khớp');
+      return;
     }
 
-    // If no errors, proceed with login
-    handleLogin();
-  }
+    // Nếu không có lỗi, thực hiện đăng ký
+    auth()
+      .createUserWithEmailAndPassword(userName, password)
+      .then(() => {
+        console.log('Đăng ký thành công');
+        Alert.alert('Đăng ký thành công');
+        navigation.navigate('Login');
+        setUserName('');
+        setPassword('');
+        setCfPassword('');
+      })
+      .catch((error) => {
+        console.log(error);
+        Alert.alert(error)
+        Alert.alert('Đăng ký không thành công, vui lòng thử lại');
+      });
+  };
 
   return (
     <View style={styles.container}>
@@ -96,59 +88,56 @@ const Register = ({ navigation }) => {
       <View style={styles.viewBody}>
         <View>
           <TextInPut_Custom
-            ref={userNameRef}
             onFocus={handleUserNameFocus}
-            onChangeText={setUserName}
-            placeholder='Username'
-            placeholderTextColor='gray'
+            onChangeText={(text) => setUserName(text)}
+            placeholder="Username"
+            placeholderTextColor="gray"
             style={[
               styles.input,
               userNameFocused && { borderColor: 'blue' },
-              userNameError && { borderColor: 'red', placeholderTextColor: "red" },
+              errUser && { borderColor: 'red' },
             ]}
           />
           <Text style={styles.errorText}>{errUser}</Text>
 
           <TextInPut_Custom
-            ref={passwordRef}
             onFocus={handlePasswordFocus}
-            onChangeText={setPassword}
-            placeholder='Password'
-            placeholderTextColor='gray'
+            onChangeText={(text) => setPassword(text)}
+            placeholder="Password"
+            placeholderTextColor="gray"
             style={[
               styles.input,
               passwordFocused && { borderColor: 'cyan' },
-              passwordError && { borderColor: 'red' },
+              errPass && { borderColor: 'red' },
             ]}
           />
           <Text style={styles.errorText}>{errPass}</Text>
 
           <TextInPut_Custom
-            ref={CfpasswordRef}
             onFocus={handleCfPasswordFocus}
-            onChangeText={setCfPassword}
-            placeholder='Confirm Password'
-            placeholderTextColor='gray'
+            onChangeText={(text) => setCfPassword(text)}
+            placeholder="Confirm Password"
+            placeholderTextColor="gray"
             style={[
               styles.input,
               CfpasswordFocused && { borderColor: 'cyan' },
-              CfpasswordError && { borderColor: 'red' },
+              errCfPass && { borderColor: 'red' },
             ]}
           />
           <Text style={styles.errorText}>{errCfPass}</Text>
 
-          <CustomButton
-            title='Register'
-            onPress={checkInputs}
-          />
+          <CustomButton title="Register" onPress={handleRegister} />
         </View>
         <View style={{ alignItems: 'center' }}>
-          <Text onPress={() => { navigation.navigate('Login') }} style={{ fontStyle: 'italic', marginTop: 10 }}>Do you have an account? <Text style={{ color: 'black', fontWeight: 'bold', fontStyle: 'italic' }}>Sign In</Text></Text>
+          <Text onPress={() => navigation.navigate('Login')} style={{ fontStyle: 'italic', marginTop: 10 }}>
+            Do you have an account? <Text style={{ color: 'black', fontWeight: 'bold', fontStyle: 'italic' }}>Sign In</Text>
+          </Text>
         </View>
       </View>
     </View>
-  )
-}
+  );
+};
+
 
 export default Register
 

@@ -1,19 +1,35 @@
 import { FlatList, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ItemHome from '../Item/ItemHome'
 import ItemHome2 from '../Item/ItemHome2'
+import LinearGradient from 'react-native-linear-gradient'
 
-const Home = () => {
-  // const [data, setdata] = useState([])
+const Home = ({ navigation }) => {
+  const [data1, setdata1] = useState([])
+
+  const layduLieu = async () => {
+    let linkProducts1 = 'http://192.168.1.75:3000/products';
+    try {
+      const res = await fetch(linkProducts1);
+      const jsonData = await res.json()
+      setdata1(jsonData)
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  useEffect(() => {
+    layduLieu()
+  }, [])
 
   return (
-    <View style={styles.container}>
+    <LinearGradient colors={["#262B32", "#262B33", '#FFFFFF']} style={{ flex: 1 }}>
+      < View style = { styles.container } >
       <ScrollView>
         <View style={styles.hearder}>
           <ImageBackground style={styles.imgBgr} source={require('../image/backgroundHearder.jpg')}>
             <View style={styles.viewHearder1}>
               <Text style={{ color: 'white', fontSize: 24, fontFamily: 'textLog' }}>Motorcyle burn with passion</Text>
-              <TouchableOpacity style={styles.btnCart}>
+              <TouchableOpacity style={styles.btnCart} onPress={() => navigation.navigate('Cart')}>
                 <Image style={{ width: 30, height: 30 }} source={require('../image/cart2.png')} />
               </TouchableOpacity>
             </View>
@@ -24,8 +40,8 @@ const Home = () => {
           <View style={styles.viewBody1}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', fontStyle: 'italic', color: 'black', margin: 3 }}>Motor</Text>
             <FlatList
-              data={data}
-              renderItem={({ item }) => <ItemHome item={item} />}
+              data={data1}
+              renderItem={({ item }) => <TouchableOpacity onPress={() => navigation.navigate('Deltais', { item: item })}><ItemHome item={item} /></TouchableOpacity>}
               keyExtractor={(item) => item.id}
               horizontal={false}
               numColumns={2} // Hiển thị 2 item trên mỗi dòng
@@ -36,7 +52,7 @@ const Home = () => {
           <View style={styles.viewBody1}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', fontStyle: 'italic', color: 'black', margin: 3 }}>Vehicle accessories</Text>
             <FlatList
-              data={data}
+              data={data1}
               renderItem={({ item }) => <ItemHome2 item={item} />}
               keyExtractor={(item) => item.id}
               horizontal={false}
@@ -44,8 +60,10 @@ const Home = () => {
             />
           </View>
         </View>
+
       </ScrollView>
-    </View>
+      </View >
+    </LinearGradient >
   )
 }
 
@@ -53,7 +71,8 @@ export default Home
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
+    backgroundColor: ''
   },
   hearder: {
     flex: 3,
@@ -76,7 +95,7 @@ const styles = StyleSheet.create({
     margin: 10
   },
   btnCart: {
-    backgroundColor:"rgba(0,0,0,0.6)",
+    backgroundColor: "rgba(0,0,0,0.6)",
     borderRadius: 20,
     width: 30,
     height: 30,
@@ -87,24 +106,3 @@ const styles = StyleSheet.create({
 
   }
 })
-
-const data = [
-  {
-    id: 1,
-    theFirm: "BMW",
-    motorName: "BMW S1000RR",
-    price: 1000000
-  },
-  {
-    id: 2,
-    theFirm: "BMW",
-    motorName: "BMW S1000RR",
-    price: 1000000
-  },
-  {
-    id: 3,
-    theFirm: "BMW",
-    motorName: "BMW S1000RR",
-    price: 1000000
-  }
-]

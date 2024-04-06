@@ -1,8 +1,10 @@
 import { Image, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import LinearGradient from 'react-native-linear-gradient'
 
 const Infor = ({navigation}) => {
   return (
+    <LinearGradient colors={['#87CEEB', '#FFFFF0', '#EECBAD']} style={{ flex: 1 }}>
     <View style={styles.container}>
       <View style={{alignItems:"center",margin:10}}>
       <Text style={{color:'black',fontWeight:"bold",fontSize:20}}>PROFILE</Text>
@@ -19,8 +21,8 @@ const Infor = ({navigation}) => {
         <View style={styles.viewText}>
   
           <Text>__________________________________________________</Text>
-          <Text style={styles.textContent}>Chỉnh sửa thông tin</Text>
-          <Text style={styles.textContent}>Danh sách yêu thích</Text>
+          <Text style={styles.textContent} onPress={()=>navigation.navigate('UpdatePRF')}>Chỉnh sửa thông tin</Text>
+          <Text style={styles.textContent} onPress={()=>navigation.navigate('Favorites')}>Danh sách yêu thích</Text>
           <Text style={styles.textContent}>Lịch sử xem</Text>
           <Text onPress={()=>{navigation.navigate('Login')}} style={[styles.textContent,{color:'red'}]}>Đăng xuất</Text>
 
@@ -28,6 +30,7 @@ const Infor = ({navigation}) => {
 
       </View>
     </View>
+    </LinearGradient>
   )
 }
 
